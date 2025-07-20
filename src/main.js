@@ -27,9 +27,9 @@ function createWindow() {
     mainWindow.loadFile(rendererPath);
   }
 
-  
+  if (isDev) {
     mainWindow.webContents.openDevTools();
-  
+  }
   mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription) => {
     console.error('Falló la carga de la ventana:', errorCode, errorDescription);
   });

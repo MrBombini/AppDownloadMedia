@@ -1,22 +1,22 @@
 {
-  "name": "electron-react",
-  "productName": "electron-react",
+  "name": "media-downloader",
+  "productName": "media-downloader",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "App for downloading media files",
   "main": ".vite/build/main.js",
   "scripts": {
     "start": "electron-forge start",
     "build": "vite build --config vite.renderer.config.mjs",
     "package": "electron-forge package && npm run postpackage",
-    "postpackage": "xcopy backend out\\electron-react-win32-x64\\backend /E /I /Y",
+    "postpackage": "xcopy backend out\\media-downloader-win32-x64\\backend /E /I /Y",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""
   },
   "keywords": [],
   "author": {
-    "name": "Piko",
-    "email": "pikocanfly@gmail.com"
+    "name": "rodrigo",
+    "email": "rodrigosergiocayalta@gmail.com"
   },
   "license": "MIT",
   "devDependencies": {
