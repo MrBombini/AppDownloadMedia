@@ -1,0 +1,11 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "downloader.js",
+  "type": "commonjs",
+  "dependencies": {
+    "react-router-dom": "^7.7.0",
+    "react-toastify": "^11.0.5",
+    "yt-dlp-wrap": "^2.1.0"
+  }
+}
