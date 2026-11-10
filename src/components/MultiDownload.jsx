@@ -74,6 +74,7 @@ export default function MultiDownload() {
     setSelectedTypes(newTypes);
     // Reset formato al cambiar tipo
     if (videoInfos[i] && videoInfos[i].formats) {
+      const newSelectedFormats = [...selectedFormats];
       if (type === 'mp4') {
         const filtered = videoInfos[i].formats.filter(f => f.vcodec !== 'none');
         newSelectedFormats[i] = filtered.length > 0 ? filtered[0].format_id : '';

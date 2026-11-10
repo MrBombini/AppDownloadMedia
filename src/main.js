@@ -56,6 +56,7 @@ ipcMain.handle('obtener-info-video', async (event, url) => {
     const info = await obtenerInfoVideo(url);
     return info;
   } catch (err) {
+    console.error('Error al obtener info del video:', err);
     return null;
   }
 });
