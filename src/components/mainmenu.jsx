@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { notifyDownload } from './notification';
 import Thumbnail from './Thumbnail';
 import VideoOptions from './VideoOptions';
@@ -17,10 +17,21 @@ function MainMenu() {
   const [status, setStatus] = useState('');
   const [carpeta, setCarpeta] = useState('');
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(null);
+
+  useEffect(() => {
+    if (window.api?.onProgreso) {
+      const unsubscribe = window.api.onProgreso((p) => {
+        setProgress(p);
+      });
+      return unsubscribe;
+    }
+  }, []);
 
   const fetchInfo = async () => {
     setStatus('Cargando información...');
     setLoading(true);
+    setProgress(null);
     try {
       const info = await window.api.obtenerInfoVideo(url);
       setVideoInfo(info);
@@ -56,6 +67,7 @@ function MainMenu() {
       return;
     }
     setLoading(true);
+    setProgress(null);
     // Bloquear la ventana principal mientras se elige la carpeta
     await window.api.bloquearVentana(true);
     const ruta = await window.api.elegirCarpeta();
@@ -66,9 +78,10 @@ function MainMenu() {
       return;
     }
     setCarpeta(ruta);
-    setStatus('Descargando...');
+    setStatus('Iniciando descarga...');
     const result = await window.api.descargarVideo(url, selectedFormat, ruta);
     setLoading(false);
+    setProgress(null);
     if (result.ok) {
       setStatus(`Descarga completada`);
       notifyDownload(result.path);
@@ -151,10 +164,32 @@ function MainMenu() {
           <p className="mt-4 text-sm text-gray-600">Carpeta: {carpeta}</p>
           <p className="mt-2 font-semibold">{status}</p>
           {loading && (
-            <div className="flex justify-center items-center w-full mb-4">
-              <div className='mt-10'>
-                <Loader />
-              </div>
+            <div className="w-full mt-6 flex flex-col items-center">
+              {progress ? (
+                <div className="w-full max-w-lg bg-gray-50 rounded-lg p-4 border border-gray-300 shadow-sm">
+                  <div className="flex justify-between text-sm font-medium text-gray-700 mb-1">
+                    <span>Descargando...</span>
+                    <span className="font-bold text-blue-600">
+                      {progress.percent !== undefined ? `${progress.percent.toFixed(1)}%` : ''}
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                    <div
+                      className="bg-blue-600 h-3 rounded-full transition-all duration-200"
+                      style={{ width: `${progress.percent || 0}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-xs text-gray-500 mt-2">
+                    <span>{progress.currentSpeed ? `Velocidad: ${progress.currentSpeed}` : ''}</span>
+                    <span>{progress.totalSize ? `Tamaño: ${progress.totalSize}` : ''}</span>
+                    <span>{progress.eta ? `Tiempo restante: ${progress.eta}` : ''}</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-4">
+                  <Loader />
+                </div>
+              )}
             </div>
           )}
         </>

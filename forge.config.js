@@ -6,6 +6,7 @@ module.exports = {
     asar: true,
     icon: 'icon',
     executableName: 'DropVid',
+    extraResource: ['./backend'],
   },
   rebuildConfig: {},
   makers: [

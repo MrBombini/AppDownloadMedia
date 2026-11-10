@@ -7,4 +7,9 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.invoke('descargar-video', { url, formato, ruta }),
   obtenerInfoVideo: (url) => ipcRenderer.invoke('obtener-info-video', url),
   bloquearVentana: (bloquear) => ipcRenderer.invoke('bloquear-ventana', bloquear),
+  onProgreso: (callback) => {
+    const handler = (_event, progress) => callback(progress);
+    ipcRenderer.on('descarga-progreso', handler);
+    return () => ipcRenderer.removeListener('descarga-progreso', handler);
+  },
 });

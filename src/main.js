@@ -1,10 +1,9 @@
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import path from 'path';
+import fs from 'fs';
+import { descargarVideo, obtenerInfoVideo } from './downloader.js';
 
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
-const path = require('path');
-const fs = require('fs');
 const isDev = process.env.NODE_ENV === 'development' || process.env.ELECTRON_IS_DEV === '1';
-const backendPath = require('path').resolve(process.cwd(), 'backend', 'downloader.js');
-const { descargarVideo, obtenerInfoVideo } = require(backendPath);
 
 let mainWindow;
 
@@ -70,7 +69,11 @@ ipcMain.handle('elegir-carpeta', async () => {
 
 ipcMain.handle('descargar-video', async (event, { url, formato, ruta }) => {
   try {
-    const resultPath = await descargarVideo(url, formato, ruta);
+    const resultPath = await descargarVideo(url, formato, ruta, (progress) => {
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('descarga-progreso', progress);
+      }
+    });
     return { ok: true, path: resultPath };
   } catch (err) {
     return { ok: false, error: err.message };
